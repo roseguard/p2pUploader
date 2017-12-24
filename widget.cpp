@@ -27,6 +27,9 @@ Server::Server(QString fileName, QObject *parent)
     {
         qDebug() << list.at(i).toString();
     }
+
+    qDebug() << "";
+    qDebug() << "(c) roseguardd@gmail.com";
 }
 
 Server::~Server()
