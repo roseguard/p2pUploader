@@ -1,6 +1,6 @@
 #include "widget.h"
 #include <QFileInfo>
-
+#include <QNetworkInterface>
 #define port 51034
 
 Server::Server(QString fileName, QObject *parent)
@@ -9,12 +9,24 @@ Server::Server(QString fileName, QObject *parent)
     fileString = fileName;
     server = new QTcpServer(this);
     connect(server, SIGNAL(newConnection()), this, SLOT(getConnected()));
-    if(!server->listen(QHostAddress::Any, port))
+    int changePort = 0;
+    while(!server->listen(QHostAddress::Any, port+changePort))
     {
-        qDebug() << "Cannot start server. Maybe port " + QByteArray::number(port) + " is already in work. Check, maybe other program use this port";
-        deleteLater();
+        qDebug() << "\nCannot start server on port " + QByteArray::number(port+changePort);
+        qDebug() << "Trying to start server on " << port+(++changePort);
     }
-    qDebug() << "Server started";
+    qDebug() << "\nServer started on port : " << server->serverPort();
+    qDebug() << "\nNow you can use your address and port to download " << fileString << " from network";
+    qDebug() << "\nExample for localhost(only for your computer) 127.0.0.1:" << server->serverPort();
+    qDebug() << "\nExample for some example local network(only for computer in your local network) 192.168.0.201:" << server->serverPort();
+    qDebug() << "\nLast one was only example address. If you want to send file in internet find out your public address. If you do not know how, you may try to find out on 2ip.ru";
+
+    qDebug() << "\nAlso you may found your public or local address in this list (it may work only in some cases)";
+    auto list = QNetworkInterface::allAddresses();
+    for(int i = 0; i < list.length(); i++)
+    {
+        qDebug() << list.at(i).toString();
+    }
 }
 
 Server::~Server()
