@@ -1,4 +1,5 @@
 #include "widget.h"
+#include <QThread>
 #include <QFileInfo>
 #include <QNetworkInterface>
 #define port 51034
@@ -53,17 +54,17 @@ void Server::getConnected()
     socket->write("\r\n");
     socket->flush();
     socket->waitForBytesWritten();
-    for(int i = 0; i < file.size(); i+=1024)
+    for(int i = 0; i < file.size(); i+=1024000)
     {
         if(socket->state()==QTcpSocket::UnconnectedState)
             return;
-        if(i%1024000 == 0)
+        if(i%5120000 == 0)
         {
-            qDebug() << "Sended : " << i << "/" << file.size();
+            qDebug() << QThread::currentThread() << " : Sended : " << i << "/" << file.size();
         }
-        socket->write(file.read(1024), 1024);
+        socket->write(file.read(1024000), 1024000);
         socket->flush();
-        socket->waitForBytesWritten();
+//        socket->waitForBytesWritten();
     }
     socket->flush();
 }
