@@ -10,9 +10,6 @@ int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
 
-    QObject e[15][18][13];
-    qDebug() << get_array_size(e);
-
     if(QCoreApplication::arguments().length()<2)
     {
         qDebug() << "Need argument (path to the uploading file)";
